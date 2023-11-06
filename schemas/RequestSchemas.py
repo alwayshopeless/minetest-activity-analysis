@@ -17,10 +17,26 @@ def dateStrToTimestamp(date):
 
 
 class PlayerActionSchema(Schema):
-    players = fields.List(required=True, cls_or_instance=fields.String)
-    actions = fields.List(required=True, cls_or_instance=fields.String)
-    dateFrom = fields.String(required=False, default=None, missing=None, data_key="from")
-    dateTo = fields.String(required=False, default=None, missing=None, data_key="to")
+    players = fields.List(required=True, cls_or_instance=fields.String,
+                          metadata={
+                              "description": "A list of players",
+                              "example": ['Player1', "Player2"],
+                          })
+    actions = fields.List(required=True, cls_or_instance=fields.String,
+                          metadata={
+                              "description": "A list of actions: places node, digs, moves, takes",
+                              "example": ['places node', "takes", "moves"],
+                          })
+    dateFrom = fields.String(required=False, default=None, missing=None, data_key="from",
+                             metadata={
+                                 "description": "Date in format dd-mm-yyyy hh:ii",
+                                 "example": "31-12-2020"
+                             })
+    dateTo = fields.String(required=False, default=None, missing=None, data_key="to",
+                           metadata={
+                               "description": "Date in format dd-mm-yyyy hh:ii",
+                               "example": "31-12-2020"
+                           })
 
     @post_load
     def asdsad(self, data, **kwargs):
@@ -34,19 +50,70 @@ class LogsSchema(PlayerActionSchema):
 
 
 class ClustersSchema(PlayerActionSchema):
-    mode = fields.String(missing='2d', validate=validate.OneOf(['2d', '3d']))
-    onlyCount = fields.Boolean(missing=False)
+    mode = fields.String(missing='2d', validate=validate.OneOf(['2d', '3d']),
+                         metadata={
+                             "description": "Mode for calculating clusters, 2d can speed up calculation. Default: 3D",
+                             "example": "2d"
+                         }
+                         )
+    onlyCount = fields.Boolean(missing=False,
+                               metadata={
+                                   "description": "Show only count for group positions",
+                                   "example": True
+                               }
+                               )
 
 
 class ActivityByPosSchema(ClustersSchema):
-    pos = fields.List(cls_or_instance=fields.Int, required=True)
-    radius = fields.Int(missing=100)
+    pos = fields.List(cls_or_instance=fields.Int, required=True,
+                      metadata={
+                          "description": "Center position",
+                          "example": [0, 0, 0]
+                      }
+
+                      )
+    radius = fields.Int(
+        missing=100,
+        metadata={
+            "description": "Radius, default 100",
+            "example": 54
+        }
+
+    )
+
 
 class AuthActivitySchema(Schema):
-    players = fields.List(required=True, cls_or_instance=fields.String)
+    players = fields.List(
+        required=True, cls_or_instance=fields.String,
+        metadata={
+            "description": "A list of players",
+            "example": ['Player1', "Player2"],
+        }
+    )
+
 
 class IpsHistorySchema(Schema):
-    players = fields.List(required=True, cls_or_instance=fields.String)
+    players = fields.List(
+        required=True, cls_or_instance=fields.String,
+        metadata={
+            "description": "A list of players",
+            "example": ['Player1', "Player2"],
+        }
+    )
+
 
 class IpsHistoryByMaskSchema(Schema):
-    ipMasks = fields.List(required=True, cls_or_instance=fields.String, data_key='ips')
+    ipMasks = fields.List(
+        required=True,
+        cls_or_instance=fields.String,
+        data_key='ips',
+
+        metadata={
+            "description": "List of IPs or their parts",
+            "example": [
+                "37.123.",
+                "127.0.",
+                "192.168.",
+                "87.123.23.123"
+            ],
+        })

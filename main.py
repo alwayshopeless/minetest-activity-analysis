@@ -5,15 +5,30 @@ import json
 from minetest_log_parser.Parser.MinetestLogParser import MinetestLogParser
 
 from schemas.RequestSchemas import LogsSchema, ClustersSchema, ActivityByPosSchema, AuthActivitySchema, \
-    IpsHistoryByMaskSchema
+    IpsHistoryByMaskSchema, IpsHistorySchema
 
 from src.minetest_activity_analysis.ActivitySorter.ActivitySorter import ActivitySorter
 
-from starlette.applications import Starlette
-from apiman.starlette import Apiman
+from apispec import APISpec
+from apispec.ext.marshmallow import MarshmallowPlugin
+from flask_apispec import marshal_with, use_kwargs
+from flask_apispec.views import MethodResource
+from flask_apispec.extension import FlaskApiSpec
+
+
+class Config:
+    APISPEC_SPEC = APISpec(
+        title="Minetest Activity Analysis",
+        version="v0.0.1",
+        plugins=[MarshmallowPlugin()],
+        openapi_version="2.0.0",
+    )
+    APISPEC_SWAGGER_URL = "/swagger/"  # Corresponds to Documentation
+    APISPEC_SWAGGER_UI_URL = "/swagger_ui/"  # Corresponds to MainSwagger UI
+
 
 app = Flask(__name__)
-apiman = Apiman(template="./docs/openapi.yml")
+docs = FlaskApiSpec(app)
 
 # define path to your log-file
 # logFilepath = "./debug.txt"
@@ -46,6 +61,7 @@ def jsonErrorResponse(messages):
 # players - arrays of players names
 # actions - arrays of actions. Available: "places node", "digs", "takes", "moves"
 @app.route('/api/logs', methods=['POST'])
+@use_kwargs(LogsSchema, location="json")
 def logs():
     json_data = request.get_json()
     if not json_data:
@@ -66,9 +82,9 @@ def logs():
         "data": logs
     }), 200
 
-
+@use_kwargs(ClustersSchema, location="json")
 @app.route('/api/logs/clusters', methods=['POST'])
-def logs2():
+def clusters():
     json_data = request.get_json()
     if not json_data:
         return jsonify({"message": "Wrong JSON format"}), 400
@@ -103,7 +119,8 @@ def logs2():
 #
 #
 @app.post('/api/logs/activity-by-pos')
-def logs3():
+@use_kwargs(ActivityByPosSchema, location="json")
+def activity_pos():
     json_data = request.get_json()
     if not json_data:
         return jsonify({"message": "Wrong JSON format"}), 400
@@ -142,7 +159,8 @@ def logs3():
 #
 #
 @app.post('/api/logs/auths')
-def authsList():
+@use_kwargs(AuthActivitySchema, location="json")
+def auths_list():
     json_data = request.get_json()
     if not json_data:
         return jsonify({"message": "Wrong JSON format"}), 400
@@ -165,7 +183,8 @@ def authsList():
 
 
 @app.post('/api/logs/ips')
-def ipsList():
+@use_kwargs(IpsHistorySchema, location="json")
+def ips_list():
     json_data = request.get_json()
     if not json_data:
         return jsonify({"message": "Wrong JSON format"}), 400
@@ -198,7 +217,8 @@ def ipsList():
 
 #
 @app.post('/api/logs/players/find-by-ips')
-def ipsByMasksList():
+@use_kwargs(IpsHistoryByMaskSchema, location="json")
+def ips_by_masks_list():
     json_data = request.get_json()
     if not json_data:
         return jsonify({"message": "Wrong JSON format"}), 400
@@ -229,6 +249,13 @@ def ipsByMasksList():
         "result": 'success',
         "data": ips
     })
+
+
+docs.register(logs)
+docs.register(activity_pos)
+docs.register(auths_list)
+docs.register(ips_list)
+docs.register(ips_by_masks_list)
 
 if __name__ == '__main__':
     app.run(debug=True, port=8080)
