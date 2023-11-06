@@ -31,6 +31,8 @@ Also, routes accepts "players" and "actions" parameters, if you leave them empty
 
 # API specification:
 After starts open URL in console, looks like that:
+```bash
 * Running on http://127.0.0.1:8080
+```
 And you will be redirected to the documentation
 
