@@ -9,3 +9,21 @@ Clone repository and use pip for install requirements(Don't forget to create a v
 ```bash
 pip install -r ./requirements.txt
 ```
+## Usage
+Change path to log file in main.py
+```python
+# define path to your log-file
+logFilepath = "./debug.txt"
+```
+Change port and IP, if you need
+```python
+run(host='localhost', port=8080)
+```
+Run script
+```bash
+python main.py
+```
+After start of web-server you can sending request to API on routes /api/logs/*
+
+All methods accepts "from" and "to" parameters for check log in limited period.
+Also, routes accepts "players" and "actions" parameters, if you leave them empty, you will receive all logs regardless of the type or player name.
