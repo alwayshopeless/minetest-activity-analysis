@@ -1,13 +1,10 @@
 from datetime import datetime
-
 from bottle import route, run, post, request, response
 import json
-
 from minetest_log_parser.Parser.MinetestLogParser import MinetestLogParser
-
 from src.minetest_activity_analysis.src.ActivitySorter.ActivitySorter import ActivitySorter
 
-# logFilepath = "./all-logs/log.txt"
+# define path to your log-file
 logFilepath = "./debug.txt"
 
 
