@@ -27,3 +27,10 @@ After start of web-server you can sending request to API on routes /api/logs/*
 
 All methods accepts "from" and "to" parameters for check log in limited period.
 Also, routes accepts "players" and "actions" parameters, if you leave them empty, you will receive all logs regardless of the type or player name.
+
+
+# API specification:
+After starts open URL in console, looks like that:
+* Running on http://127.0.0.1:8080
+And you will be redirected to the documentation
+
