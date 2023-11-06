@@ -1,6 +1,7 @@
 aniso8601==9.0.1
 anyio==4.0.0
 apiman==0.5.4
+apispec==6.3.0
 attrs==23.1.0
 blinker==1.7.0
 bravado-core==6.1.0
@@ -8,6 +9,7 @@ certifi==2023.7.22
 charset-normalizer==3.3.2
 click==8.1.7
 Flask==3.0.0
+flask-apispec==0.11.4
 Flask-RESTful==0.3.10
 idna==3.4
 itsdangerous==2.1.2
@@ -36,6 +38,7 @@ strict-rfc3339==0.7
 swagger-spec-validator==3.0.3
 typing_extensions==4.8.0
 urllib3==2.0.7
+webargs==8.3.0
 webcolors==1.13
 Werkzeug==3.0.1
 xmltodict==0.13.0
