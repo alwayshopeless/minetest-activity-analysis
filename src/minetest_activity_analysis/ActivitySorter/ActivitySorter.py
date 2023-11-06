@@ -25,22 +25,25 @@ class ActivitySorter:
 
     def getActions(self, players=[], actionTypes=[], dateFrom=None, dateTo=None):
         logs = []
-        for item in self.readActions(players, actionTypes):
+        for item in self.readActions(players, actionTypes, dateFrom, dateTo):
             if item is None:
                 continue
+            logs.append(item)
+        return logs
+
+    def readActions(self, players=[], actionTypes=[], dateFrom=None, dateTo=None):
+        '''Returns generator of actions by player and actions types'''
+        for item in self.logParser.read():
+            if item['logType'] != 'action':
+                continue
+            if item['name'] == None:
+                continue
+
             if dateFrom is not None and item['timestamp'] < dateFrom:
                 continue
             if dateTo is not None and item['timestamp'] > dateTo:
                 continue
 
-            logs.append(item)
-        return logs
-
-    def readActions(self, players=[], actionTypes=[]):
-        '''Returns generator of actions by player and actions types'''
-        for item in self.logParser.read():
-            if item['logType'] != 'action':
-                continue
             if (item['name'] in players or len(players) == 0) and (
                     item['action'] in actionTypes or len(actionTypes) == 0):
                 yield item
@@ -183,7 +186,7 @@ class ActivitySorter:
                 continue
             if dateTo is not None and record['timestamp'] > dateTo:
                 continue
-            if record['name'] not in players:
+            if record['name'] not in players and len(players) != 0:
                 continue
 
             auths.append(record)
